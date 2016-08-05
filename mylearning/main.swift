@@ -10,3 +10,9 @@ import Foundation
 
 print("Hello, World!")
 
+var v1 = Vector([1,2,3,4,5])
+var v2 = Vector([1,2,3,4,5])
+
+var v3 = v1 + v2
+
+print(v3)
