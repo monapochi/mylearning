@@ -29,10 +29,19 @@ struct Vector {
         }
     
     }
+    
+    func dot (r: Vector) -> Double {
+        var v = 0.0
+        vDSP_dotprD(_vec, 1, r._vec, 1, &v, vDSP_Length(_vec.count))
+        return v
+    }
+    
+    
+
 }
 
 func + (l: Vector, r: Vector) -> Vector {
-    assert(l.count == r.count, "Different length vector cannot be added")
+//    assert(l.count == r.count, "Different length vector cannot be added")
 //    return Vector(l._vec.enumerate().map {i,n in
 //        return n + r[i]
 //        })
@@ -41,5 +50,33 @@ func + (l: Vector, r: Vector) -> Vector {
     vDSP_vaddD(l._vec, 1, r._vec, 1, &v, 1, vDSP_Length(l.count))
     return Vector(v)
     
+}
+
+func * (l: Vector, r: Vector) -> Vector {
+    var v = [Double](count : l.count, repeatedValue : 0.0)
+    vDSP_vmulD(l._vec, 1, r._vec, 1, &v, 1, vDSP_Length(l.count))
+    return Vector(v)
+    
+}
+
+func / (l: Vector, r: Vector) -> Vector {
+    var v = [Double](count : l.count, repeatedValue : 0.0)
+    vDSP_vdivD(l._vec, 1, r._vec, 1, &v, 1, vDSP_Length(l.count))
+    return Vector(v)
+    
+}
+
+func + (l: Vector, r: Double) -> Vector {
+    var v = [Double](count : l.count, repeatedValue : 0.0)
+    var s = r
+    vDSP_vsaddD(l._vec, 1, &s, &v, 1, vDSP_Length(l.count))
+    return Vector(v)
+}
+
+func * (l: Vector, r: Double) -> Vector {
+    var v = [Double](count : l.count, repeatedValue : 0.0)
+    var s = r
+    vDSP_vsmulD(l._vec, 1, &s, &v, 1, vDSP_Length(l.count))
+    return Vector(v)
 }
 

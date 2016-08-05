@@ -10,9 +10,13 @@ import Foundation
 
 print("Hello, World!")
 
+var v2 = Vector([1.1,2,3,4,5])
 var v1 = Vector([1,2,3,4,5])
-var v2 = Vector([1,2,3,4,5])
 
 var v3 = v1 + v2
 
 print(v3)
+
+var d = v1.dot(v2)
+
+print(d)
