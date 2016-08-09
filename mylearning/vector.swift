@@ -80,3 +80,9 @@ func * (l: Vector, r: Double) -> Vector {
     return Vector(v)
 }
 
+func - (l: Vector, r: Vector) -> Vector {
+    var v = [Double](count : l.count, repeatedValue : 0.0)
+    vDSP_vsubD(l._vec, 1, r._vec, 1, &v, 1, vDSP_Length(l.count))
+    return Vector(v)
+}
+

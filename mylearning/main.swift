@@ -10,13 +10,184 @@ import Foundation
 
 print("Hello, World!")
 
-var v2 = Vector([1.1,2,3,4,5])
-var v1 = Vector([1,2,3,4,5])
+//var v2 = Vector([1.1,2,3,4,5])
+//var v1 = Vector([1,2,3,4,5])
+//
+//var v3 = v1 + v2
+//
+//print(v3)
+//
+//var d = v1.dot(v2)
+//
+//print(d)
 
-var v3 = v1 + v2
 
-print(v3)
+//for _ in 0..<20 {
+//    var r = arc4random_uniform(200801011) % 2
+//    print("> \(r)")
+//}
 
-var d = v1.dot(v2)
 
-print(d)
+
+
+
+
+
+//// 2016.8.9 A　下はいろいろ失敗なのでやりなおし
+//func rnd() -> Double {
+//    return (Double)(arc4random_uniform(200801011) % 2)
+//}
+//
+//func judge(arr: [Int]) -> Bool {
+//    return arr[0] & arr[1] == 1 ? true : false
+//}
+//
+//func train (v: Vector, w: Vector, result: Int) {
+//    var count = 0
+//    let r = 0.1
+//    var b = w.dot(v)
+//    var nw = w
+//    
+//    let t = Double(result)
+//    
+//    while(b != 0) {
+//        let l = nw + v * t * r
+//        
+//        nw =  l
+//        
+//        
+//        b = nw.dot(v)
+//        
+//        print("\(count) ------------")
+//        print("dot > \(b)")
+//        
+//        count += 1
+//    }
+//}
+//
+//
+//let T = [[1,0],[1,1],[0,0],[1,0],[0,0],[1,0],[1,0],[1,0],[1,1],[1,0],[1,1],[1,0],[1,0],[0,0],[1,0],[1,1],[1,0],[1,0]]
+//
+//var w = Vector([rnd(), rnd()])
+//
+//T.forEach { (d) in
+//    print("----------------------------")
+//
+//    let x = Double(d[0])
+//    let y = Double(d[1])
+//    let res = judge(d)
+//    print("teacher > \(x), \(y) -> \(res)")
+//    
+//    var vec = Vector([x,y])
+//    
+//    let ans = vec.dot(w) == 0 ? true : false;
+//    print("1st answer > \(ans)")
+//    
+//    if(res != ans) {
+//        print("start training ...")
+//        train(vec, w: w, result: res ?  1 : -1)
+//        
+//    }
+//    
+//}
+
+// --------------------------------------------------------------------------------------
+
+
+//// 2016.8.9 B
+let T = [[1,0],[1,1],[0,0],[1,0],[0,0],[1,0],[1,0],[1,0],[1,1],[1,0],[1,1],[1,0],[1,0],[0,0],[1,0],[1,1],[1,0],[1,0]]
+let TT = [[1,1],[0,1],[1,0],[0,0],[1,0],[1,1],[1,0],[0,0],[1,0],[1,0],[0,1],[1,1],[1,0],[1,1],[1,0],[1,1],[0,0],[0,1]]
+
+
+var w = [0.02, 0.03, 0.04] // 初期値は適当 2次元データを対象にしてるので n+1 次
+
+
+
+func judge(arr: [Int]) -> Double {
+    return arr[0] & arr[1] == 1 ? 1 : 0
+}
+
+func stepFunc(n: Double) -> Double {
+    return n < 0 ? 0 : 1
+}
+
+func rnd() -> Double {
+    return (Double)(arc4random_uniform(200801011) % 10) / 10000
+}
+
+
+func train() -> Bool {
+    var flag = false
+    
+    T.forEach { (d) in
+        
+        let x = Double(d[0])
+        let y = Double(d[1])
+        
+        // 内積計算
+        var dot = 1 * w[0] + x * w[1] + y * w[2]
+        print("dot> \(dot)")
+        
+        let teacher = judge(d)
+        var ans = stepFunc(dot)
+        while(ans != teacher) {
+            flag = true
+            print("  training ...")
+            
+            w[0] += 0.001 * (teacher - ans) * 1
+            w[1] += 0.001 * (teacher - ans) * x
+            w[2] += 0.001 * (teacher - ans) * y
+            
+            dot = 1 * w[0] + x * w[1] + y * w[2]
+            ans = stepFunc(dot)
+            
+            print("  dot> \(dot)")
+            
+        }
+        
+    }
+    
+    return flag
+}
+
+
+var fLoop = true
+
+while(fLoop) {
+    fLoop = train()
+}
+
+
+
+print("----------------------------")
+print(" result")
+print("----------------------------")
+
+TT.forEach { (d) in
+    let x = Double(d[0])
+    let y = Double(d[1])
+    let res = judge(d) == 1 ? true : false
+    let dot = 1 * w[0] + x * w[1] + y * w[2]
+    let ans = stepFunc(dot) == 1 ? true : false
+    print("teacher > \(x), \(y) -> \(res)")
+    print("answer  >             \(ans)")
+    print("")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
