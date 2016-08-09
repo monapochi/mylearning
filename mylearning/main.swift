@@ -99,24 +99,37 @@ let T = [[1,0],[1,1],[0,0],[1,0],[0,0],[1,0],[1,0],[1,0],[1,1],[1,0],[1,1],[1,0]
 let TT = [[1,1],[0,1],[1,0],[0,0],[1,0],[1,1],[1,0],[0,0],[1,0],[1,0],[0,1],[1,1],[1,0],[1,1],[1,0],[1,1],[0,0],[0,1]]
 
 
-var w = [0.02, 0.03, 0.04] // 初期値は適当 2次元データを対象にしてるので n+1 次
+func rnd() -> Double {
+    return (Double)(arc4random_uniform(20080111) % 10) / 10000
+}
+
+var w = [rnd(), rnd(), rnd()] // 初期値は適当 2次元データを対象にしてるので n+1 次
+
+// 教師データ作成
+func T2() -> [[Double]] {
+    let c = 10
+    var arr = Array<Array<Double>>()
+    for _ in 0..<c {
+        let a = (Double)(arc4random_uniform(20080111) % 2)
+        let b = (Double)(arc4random_uniform(20120904) % 2)
+        arr.append([a, b])
+    }
+    
+    return arr
+}
 
 
-
-func judge(arr: [Int]) -> Double {
-    return arr[0] & arr[1] == 1 ? 1 : 0
+func judge(arr: [Double]) -> Double {
+    let a = arr[0] == 1 ? true : false
+    let b = arr[1] == 1 ? true : false
+    return  a && b  ? 1 : 0
 }
 
 func stepFunc(n: Double) -> Double {
     return n < 0 ? 0 : 1
 }
 
-func rnd() -> Double {
-    return (Double)(arc4random_uniform(200801011) % 10) / 10000
-}
-
-
-func train() -> Bool {
+func train(T: [[Double]]) -> Bool {
     var flag = false
     
     T.forEach { (d) in
@@ -125,8 +138,8 @@ func train() -> Bool {
         let y = Double(d[1])
         
         // 内積計算
-        var dot = 1 * w[0] + x * w[1] + y * w[2]
-        print("dot> \(dot)")
+        var dot = 1 * w[0] + x * w[1] + y * w[2] // 最初の 1 はしきい値を気にせずに済むように
+        //print("dot> \(dot)")
         
         let teacher = judge(d)
         var ans = stepFunc(dot)
@@ -152,9 +165,10 @@ func train() -> Bool {
 
 
 var fLoop = true
-
+let trainingData = T2()
+print("training data> \(trainingData)")
 while(fLoop) {
-    fLoop = train()
+    fLoop = train(trainingData)
 }
 
 
@@ -166,7 +180,7 @@ print("----------------------------")
 TT.forEach { (d) in
     let x = Double(d[0])
     let y = Double(d[1])
-    let res = judge(d) == 1 ? true : false
+    let res = judge([x, y]) == 1 ? true : false
     let dot = 1 * w[0] + x * w[1] + y * w[2]
     let ans = stepFunc(dot) == 1 ? true : false
     print("teacher > \(x), \(y) -> \(res)")
