@@ -106,12 +106,11 @@ func rnd() -> Double {
 var w = [rnd(), rnd(), rnd()] // 初期値は適当 2次元データを対象にしてるので n+1 次
 
 // 教師データ作成
-func T2() -> [[Double]] {
-    let c = 10
+func T2(c: uint, max: uint = 2) -> [[Double]] {
     var arr = Array<Array<Double>>()
     for _ in 0..<c {
-        let a = (Double)(arc4random_uniform(20080111) % 2)
-        let b = (Double)(arc4random_uniform(20120904) % 2)
+        let a = (Double)(arc4random_uniform(20080111) % max)
+        let b = (Double)(arc4random_uniform(20120904) % max)
         arr.append([a, b])
     }
     
@@ -122,7 +121,8 @@ func T2() -> [[Double]] {
 func judge(arr: [Double]) -> Double {
     let a = arr[0] == 1 ? true : false
     let b = arr[1] == 1 ? true : false
-    return  a && b  ? 1 : 0
+//    return  a && b  ? 1 : 0 // AND
+    return  a || b  ? 1 : 0 // OR
 }
 
 func stepFunc(n: Double) -> Double {
@@ -141,8 +141,10 @@ func train(T: [[Double]]) -> Bool {
         var dot = 1 * w[0] + x * w[1] + y * w[2] // 最初の 1 はしきい値を気にせずに済むように
         //print("dot> \(dot)")
         
-        let teacher = judge(d)
-        var ans = stepFunc(dot)
+//        let teacher = judge(d) // AND, OR
+//        var ans = stepFunc(dot)
+        let teacher = x + y
+        var ans = round(dot)
         while(ans != teacher) {
             flag = true
             print("  training ...")
@@ -151,8 +153,10 @@ func train(T: [[Double]]) -> Bool {
             w[1] += 0.001 * (teacher - ans) * x
             w[2] += 0.001 * (teacher - ans) * y
             
+//            dot = 1 * w[0] + x * w[1] + y * w[2]
+//            ans = stepFunc(dot)
             dot = 1 * w[0] + x * w[1] + y * w[2]
-            ans = stepFunc(dot)
+            ans = round(dot)
             
             print("  dot> \(dot)")
             
@@ -165,7 +169,7 @@ func train(T: [[Double]]) -> Bool {
 
 
 var fLoop = true
-let trainingData = T2()
+let trainingData = T2(100, max: 10)
 print("training data> \(trainingData)")
 while(fLoop) {
     fLoop = train(trainingData)
@@ -177,15 +181,30 @@ print("----------------------------")
 print(" result")
 print("----------------------------")
 
-TT.forEach { (d) in
+//TT.forEach { (d) in
+//    let x = Double(d[0])
+//    let y = Double(d[1])
+//    let res = judge([x, y]) == 1 ? true : false
+//    let dot = 1 * w[0] + x * w[1] + y * w[2]
+//    let ans = stepFunc(dot) == 1 ? true : false
+//    print("teacher > \(x), \(y) -> \(res)")
+//    print("answer  >             \(ans)")
+//    print("")
+//}
+
+print("w  > \(w)")
+print("----------------------------")
+
+T2(30, max: 20).forEach { (d) in
     let x = Double(d[0])
     let y = Double(d[1])
-    let res = judge([x, y]) == 1 ? true : false
+    let teacher = x + y
     let dot = 1 * w[0] + x * w[1] + y * w[2]
-    let ans = stepFunc(dot) == 1 ? true : false
-    print("teacher > \(x), \(y) -> \(res)")
+    let ans = round(dot)
+    let res = ans == teacher ? true : false
+    print("teacher > \(x), \(y) -> \(teacher)")
     print("answer  >             \(ans)")
-    print("")
+    print("result  >             \(res)")
 }
 
 
